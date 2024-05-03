@@ -35,7 +35,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util.js';
     const isValidUrl = isUrl(req.query.image_url);
     //    1. validate the image_url query
     if (!isValidUrl) {
-      return res.status(400).send(+ `[${req.query.image_url }]is incorrect!`);
+      return res.status(400).send(`image_url is incorrect!`);
     } 
     //    2. call filterImageFromURL(image_url) to filter the image
     filterImageFromURL(req.query.image_url)
@@ -55,7 +55,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util.js';
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async (req, res) => {
-    res.send("try GET /filteredimage?image_url={{}}")
+    res.status(200).send("try GET /filteredimage?image_url={{}}")
   } );
   
 
