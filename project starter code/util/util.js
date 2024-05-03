@@ -30,7 +30,7 @@ import axios from "axios";
           .greyscale() // set greyscale
           .write(outpath, (img) => {resolve(outpath);});
         })
-        .catch((error) => {throw error})
+        .catch((error) => { reject(error);})
       })
     } catch (error) {
       reject(error);
