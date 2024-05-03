@@ -1,5 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import { query } from 'express-validator';
+import { isUrl } from 'check-valid-url';
 import {filterImageFromURL, deleteLocalFiles} from './util/util.js';
 
 
@@ -29,8 +31,27 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util.js';
 
     /**************************************************************************** */
 
-  //! END @TODO1
-  
+  app.get( "/filteredimage", query("image_url").notEmpty(), async (req, res) => {
+    const isValidUrl = isUrl(req.query.image_url);
+    //    1. validate the image_url query
+    if (!isValidUrl) {
+      return res.status(400).send(+ `[${req.query.image_url }]is incorrect!`);
+    } 
+    //    2. call filterImageFromURL(image_url) to filter the image
+    filterImageFromURL(req.query.image_url)
+    .then((resolve) => {
+    //    3. send the resulting file in the response 
+      return res.status(200).sendFile(resolve, err => {
+        if (err) {
+          res.status(500).send(err);
+        }
+        deleteLocalFiles([resolve]);
+      })
+    })
+    .catch((error) => {
+      return res.status(500).send(error)
+    })
+  } );
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async (req, res) => {
@@ -43,3 +64,5 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util.js';
       console.log( `server running http://localhost:${ port }` );
       console.log( `press CTRL+C to stop server` );
   } );
+
+
